@@ -1,0 +1,47 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: teste-ia-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 5s
+      retries: 5
+
+  ollama-puller:
+    image: ollama/ollama:latest
+    container_name: teste-ia-puller
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    entrypoint: ["/bin/sh", "-c"]
+    command: >
+      echo 'Iniciando download do Llama 3.2...' &&
+      ollama pull llama3.2 &&
+      echo 'Aquecendo modelo...' &&
+      curl -s -X POST http://ollama:11434/api/generate -d '{"model": "llama3.2", "prompt": "Hi", "stream": false}' > /dev/null &&
+      echo 'Modelo Pronto!'
+
+  api:
+    build: .
+    container_name: teste-ia-api
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_NAME=Teste IA API
+      - OLLAMA_HOST=http://ollama:11434
+      - OLLAMA_MODEL=llama3.2
+    depends_on:
+      ollama-puller:
+        condition: service_completed_successfully
+    volumes:
+      - .:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  ollama_data:
