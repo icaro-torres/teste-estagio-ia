@@ -45,9 +45,6 @@ async def calculator_tool(expression: str) -> str:
         return f"Error calculating '{expression}': {str(e)}"
 
 def get_agent():
-    """
-    Configura o Agente usando a classe nativa OllamaModel.
-    """
     ollama_model = OllamaModel(
         host=settings.OLLAMA_HOST,
         model_id=settings.OLLAMA_MODEL,
@@ -55,10 +52,18 @@ def get_agent():
         temperature=0.1,
     )
 
+    system_prompt = (
+        "Você é um assistente de IA inteligente e útil. "
+        "Suas capacidades: "
+        "1. Para perguntas gerais, responda com seu conhecimento. "
+        "2. Para QUALQUER cálculo matemático, OBRIGATORIAMENTE use a tool 'calculator_tool'. "
+        "Responda sempre em português do Brasil."
+    )
+
     agent = Agent(
         model=ollama_model,
         tools=[calculator_tool],
-        system_prompt="Você é um assistente útil. Se for matemática, use a tool calculator_tool. Responda de forma direta."
+        system_prompt=system_prompt
     )
     
     return agent
