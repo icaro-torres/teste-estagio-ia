@@ -14,6 +14,7 @@ Além dos requisitos funcionais, este projeto foi estruturado com foco em **Enge
 * **Segurança:** Execução de código matemático em ambiente isolado (sandbox) com validação de Regex.
 * **Observabilidade:** Middleware customizado para logs de performance e rastreamento de requisições.
 * **Otimização de Performance:** Optei por utilizar o modelo Llama 3.2 (3B) em vez do Llama 3.1 (8B). Como o ambiente de execução local geralmente depende de CPU, o modelo 3.2 oferece uma resposta significativamente mais rápida (menor latência) mantendo a capacidade de raciocínio e uso de ferramentas, ideal para a UX deste desafio.
+* **Simulação de RAG (Retrieval-Augmented Generation):** Implementação de uma ferramenta (`devops_knowledge_tool`) que simula a recuperação de definições técnicas de uma base de conhecimento externa, demonstrando o conceito de enriquecimento de prompt solicitado como diferencial.
 
 ## Arquitetura da Solução
 
